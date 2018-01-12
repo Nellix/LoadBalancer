@@ -11,7 +11,7 @@
 
 using namespace std;
 
-//#define REPLICAS 1000
+#define REPLICAS 100
 
 
 vector<vector<int>>  create_perm_matrix(int num_backend);
@@ -21,7 +21,7 @@ std::vector<int> get_xdp_table(std::vector<std::vector<int>> v,int rows);
 void load_balance(int modulo,vector<int> v);
 void print_vector();
 
-int REPLICAS=0;
+//int REPLICAS=0;
 vector<int> backends(10) ;
 
 
@@ -30,38 +30,44 @@ int main(int argc, char* argv[])
     // Check the number of parameters
     if (argc < 2) {
 
-        cerr << "Insert number of backends (Example) ./algorithm 5" << endl;
+        cerr << "Insert number of backends (Example) ./algorithm 5 10" << endl;
+      	/*
+
+			5 svc with  10 backends 
+
+      	*/
         return 1;
     }
 
-    REPLICAS=atoi(argv[2]);
-   
-    vector<vector<int>> mat = create_perm_matrix(atoi(argv[1]));
-    print_matrix(mat,atoi(argv[1])*atoi(argv[2]));
+   // REPLICAS=atoi(argv[2]);
+
+
+   	int svc=atoi(argv[1]);
+   	int bck=atoi(argv[2]);
+
+    vector<vector<int>> mat = create_perm_matrix(bck);
+   // print_matrix(mat,atoi(argv[1])*atoi(argv[2]));
 
     std::vector<int> vet;
 
-    vet = get_xdp_table(mat,atoi(argv[1])*atoi(argv[2]));
+    vet = get_xdp_table(mat,bck*REPLICAS);
 
 
-  int bkd = atoi(argv[1]);
 
-    for(int i=0; i<bkd; i++)
+    for(int i=0; i<bck; i++)
         backends[i]=0;
 
 
-    thread first (load_balance,atoi(argv[1])*atoi(argv[2]),vet);  
+    thread first (load_balance,bck*REPLICAS,vet);  
     thread print_thread(print_vector);
-    first.join();
-    print_thread.join();
-
+   
 
 cout<<"-------------------\n";
     for (auto i = vet.begin(); i != vet.end(); ++i)
         std::cout << *i << endl;
 
 
-    std::vector<int> vet1,v2(atoi(argv[1])*atoi(argv[2]));
+    std::vector<int> vet1,v2(bck*REPLICAS);
     mat.erase (mat.begin()+1,mat.begin()+2);
 
  
@@ -73,7 +79,7 @@ cout<<"-------------------\n";
        mat.insert (mat.begin()+1,v2);
 
 
-    vet1 = get_xdp_table(mat,atoi(argv[1])*atoi(argv[2]));
+    vet1 = get_xdp_table(mat,bck*REPLICAS);
     cout<<"-------------------a\n";
     int c=0;
 
@@ -92,6 +98,8 @@ cout<<"-------------------\n";
 
 
 
+ 	first.join();
+    print_thread.join();
 
 
     return 0;

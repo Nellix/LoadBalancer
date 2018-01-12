@@ -1,0 +1,61 @@
+module loadbalancer {
+	yang-version 1.0;
+	namespace "http://iovisor.org/iovnet/loadbalancer";
+	prefix "loadbalancer";
+
+	import base-iovnet-service-model { prefix "basemodel"; }
+
+	organization "Politecnico di Torino";
+ 	description "Data model for an IOVisor-based loadbalancer";
+
+	extension cli-example {
+		argument "value";
+		description "A sample value used by the CLI generator";
+	}
+
+	uses "basemodel:base-yang-module";
+
+	
+
+	container service {
+		description "service represent the pool of services of k8s answering requests";
+		leaf name {
+			type string;
+			description "service 's name related to the backend server of the pool is connected to";
+			loadbalancer:cli-example "toServer1";
+		}
+		leaf ip {
+			type string;
+			description "vip related to the backend server of the pool is connected to";
+			loadbalancer:cli-example "130.192.100.12";
+		}
+
+		list pool {
+			key "ip";
+			description "pool of backend servers serving requests";
+			leaf name {
+				type string;
+				description "name";
+			}
+
+			leaf ip {
+				type string;
+				description "ip address of the backend server of the pool";
+				loadbalancer:cli-example "10.244.1.23";
+			}
+		}
+	}
+}
+
+/*
+
+  <service>
+    <name></name>
+    <ip></ip>
+    <pool>
+   	    <name></name>
+	    <ip></ip>
+    <\pool>
+  </service>
+
+  */
