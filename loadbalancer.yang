@@ -22,7 +22,7 @@ module loadbalancer {
 		leaf name {
 			type string;
 			description "service 's name related to the backend server of the pool is connected to";
-			loadbalancer:cli-example "toServer1";
+			loadbalancer:cli-example "Service-nigx";
 		}
 		leaf ip {
 			type string;
@@ -36,6 +36,7 @@ module loadbalancer {
 			leaf name {
 				type string;
 				description "name";
+				loadbalancer:cli-example "backend1";
 			}
 
 			leaf ip {
